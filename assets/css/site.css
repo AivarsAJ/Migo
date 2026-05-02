@@ -1322,7 +1322,7 @@ Video Style
 
 /* 
 ---------------------------------------------
-Rentals page (rentals.html)
+Rentals site home (index.html)
 --------------------------------------------- 
 */
 
@@ -1345,23 +1345,19 @@ Rentals page (rentals.html)
 
 .rentals-hero-track {
   display: flex;
-  width: 400%;
+  width: 300%;
   height: 100%;
   will-change: transform;
   animation: rentalsHeroSlide 22s ease-in-out infinite;
 }
 
 .rentals-hero-slide {
-  flex: 0 0 25%;
-  width: 25%;
+  flex: 0 0 33.333%;
+  width: 33.333%;
   height: 100%;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-}
-
-.rentals-hero-slide--1 {
-  background-image: url(../images/rentals-hero-1.jpeg);
 }
 
 .rentals-hero-slide--2 {
@@ -1372,26 +1368,25 @@ Rentals page (rentals.html)
   background-image: url(../images/rentals-hero-3.jpg);
 }
 
-.rentals-hero-slide--1dup {
-  background-image: url(../images/rentals-hero-1.jpeg);
+.rentals-hero-slide--2dup {
+  background-image: url(../images/rentals-hero-2.jpg);
 }
 
 @keyframes rentalsHeroSlide {
   0%,
-  15% {
+  28% {
     transform: translateX(0);
   }
-  18%,
-  31% {
-    transform: translateX(-25%);
+  33%,
+  61% {
+    transform: translateX(-33.333%);
   }
-  34%,
-  47% {
-    transform: translateX(-50%);
+  66%,
+  94% {
+    transform: translateX(-66.666%);
   }
-  50%,
   100% {
-    transform: translateX(-75%);
+    transform: translateX(-66.666%);
   }
 }
 
@@ -1827,6 +1822,16 @@ body.rentals-site #kontakti.rentals-section {
   overflow: hidden;
 }
 
+@media (max-width: 767px) {
+  .rentals-cards-carousel-viewport {
+    touch-action: pan-y;
+  }
+}
+
+.rentals-cards-carousel-track.is-dragging {
+  transition: none;
+}
+
 .rentals-cards-carousel-track {
   display: flex;
   gap: var(--rentals-offer-gap);
@@ -1964,9 +1969,8 @@ body.rentals-site #kontakti.rentals-section {
     flex: 0 0 100%;
     width: 100%;
   }
-  .rentals-hero-slide--2,
   .rentals-hero-slide--3,
-  .rentals-hero-slide--1dup {
+  .rentals-hero-slide--2dup {
     display: none;
   }
   .rentals-hero-title {

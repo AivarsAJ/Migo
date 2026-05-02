@@ -300,6 +300,7 @@
 
 		function apply() {
 			layoutCellWidths();
+			track.classList.remove('is-dragging');
 			var mi = maxIndex();
 			if (index > mi) index = mi;
 			var step = cellStepPx();
@@ -333,6 +334,80 @@
 
 		window.addEventListener('load', apply);
 		apply();
+
+		// Mobile: swipe cards horizontally (single column)
+		var swipeStartX = 0;
+		var swipeStartY = 0;
+		var swipeStartIndex = 0;
+		var swipeAxis = null;
+		var swipeStep = 0;
+		var swipeMinT = 0;
+		var swipeMaxT = 0;
+
+		function swipeClampTranslate(t) {
+			if (t > swipeMinT) return swipeMinT;
+			if (t < swipeMaxT) return swipeMaxT;
+			return t;
+		}
+
+		function onOfferingsTouchStart(e) {
+			if (visibleCount() !== 1) return;
+			if (!e.touches || !e.touches.length) return;
+			swipeAxis = null;
+			swipeStartX = e.touches[0].clientX;
+			swipeStartY = e.touches[0].clientY;
+			swipeStartIndex = index;
+			layoutCellWidths();
+			swipeStep = cellStepPx();
+			swipeMinT = 0;
+			swipeMaxT = -maxIndex() * swipeStep;
+		}
+
+		function onOfferingsTouchMove(e) {
+			if (visibleCount() !== 1) return;
+			if (!e.touches || !e.touches.length) return;
+			var x = e.touches[0].clientX;
+			var y = e.touches[0].clientY;
+			var dx = x - swipeStartX;
+			var dy = y - swipeStartY;
+			if (swipeAxis === null) {
+				if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return;
+				if (Math.abs(dx) > Math.abs(dy) * 1.15) swipeAxis = 'h';
+				else {
+					swipeAxis = 'v';
+					return;
+				}
+			}
+			if (swipeAxis !== 'h') return;
+			e.preventDefault();
+			track.classList.add('is-dragging');
+			var base = -swipeStartIndex * swipeStep;
+			var t = swipeClampTranslate(base + dx);
+			track.style.transform = 'translateX(' + Math.round(t) + 'px)';
+		}
+
+		function onOfferingsTouchEnd(e) {
+			if (visibleCount() !== 1) return;
+			if (swipeAxis !== 'h') {
+				swipeAxis = null;
+				return;
+			}
+			var tch = e.changedTouches && e.changedTouches[0];
+			var endX = tch ? tch.clientX : swipeStartX;
+			var dx = endX - swipeStartX;
+			swipeAxis = null;
+			var threshold = Math.max(48, Math.floor(viewport.clientWidth * 0.15));
+			var mi = maxIndex();
+			if (dx < -threshold && swipeStartIndex < mi) index = swipeStartIndex + 1;
+			else if (dx > threshold && swipeStartIndex > 0) index = swipeStartIndex - 1;
+			else index = swipeStartIndex;
+			apply();
+		}
+
+		viewport.addEventListener('touchstart', onOfferingsTouchStart, { passive: true });
+		viewport.addEventListener('touchmove', onOfferingsTouchMove, { passive: false });
+		viewport.addEventListener('touchend', onOfferingsTouchEnd, { passive: true });
+		viewport.addEventListener('touchcancel', onOfferingsTouchEnd, { passive: true });
 	})();
 
 
